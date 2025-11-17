@@ -11,8 +11,8 @@ Model name is converted to lowercase for the collection name:
 - BlogPost -> "blogs" collection
 """
 
-from pydantic import BaseModel, Field
-from typing import Optional
+from pydantic import BaseModel, Field, EmailStr
+from typing import Optional, List
 
 # Example schemas (replace with your own):
 
@@ -38,8 +38,28 @@ class Product(BaseModel):
     category: str = Field(..., description="Product category")
     in_stock: bool = Field(True, description="Whether product is in stock")
 
-# Add your own schemas here:
-# --------------------------------------------------
+# Fledge-specific schemas
+
+class Lead(BaseModel):
+    """Inbound project request (Start a Project)"""
+    business_name: str = Field(..., description="Company or brand name")
+    contact_name: str = Field(..., description="Primary contact full name")
+    email: EmailStr
+    phone: Optional[str] = Field(None, description="Contact phone number")
+    project_type: str = Field(..., description="Type of project or service needed")
+    budget: str = Field(..., description="Budget range")
+    timeline: str = Field(..., description="Desired timeline")
+    message: Optional[str] = Field(None, description="Additional context or goals")
+    source: Optional[str] = Field("website", description="Lead source")
+
+class Contact(BaseModel):
+    """General contact form"""
+    name: str
+    email: EmailStr
+    message: str
+    phone: Optional[str] = None
+    company: Optional[str] = None
+    topic: Optional[str] = None
 
 # Note: The Flames database viewer will automatically:
 # 1. Read these schemas from GET /schema endpoint
